@@ -23,7 +23,7 @@ def simulate(episodes, test):
 
     ## load Q table
     q_table = np.load('q_table.npy')
-    # print(q_table)
+    print(q_table)
 
     # record data
     rec_state = np.zeros(shape=(500, 4))
@@ -77,7 +77,8 @@ def simulate(episodes, test):
 
     env.close()
 
-
+def test():
+    print("hello world")
 def state_to_bucket(state):
     # State space discretization
     NUM_BUCKETS = (1, 1, 6, 3)  # (x, x', theta, theta')
