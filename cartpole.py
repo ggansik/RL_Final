@@ -34,6 +34,10 @@ def simulate(episodes, test):
     LR = 0.1
     # discount = 0.99
 
+    rec_game_rew = []
+    avg_rew = 0
+    num_success = 0
+
     for i in range(episodes):
 
         obs = env.reset()
@@ -41,7 +45,7 @@ def simulate(episodes, test):
 
         count = 0
         done = False
-
+        game_rew = 0
         while not done:
             # record state
             rec_state[count] = current_state
@@ -58,6 +62,7 @@ def simulate(episodes, test):
             # feed action to environment
             obs, rew, done, info = env.step(action)
             count += 1
+            game_rew += rew
 
             # discretize observation
             state = state_to_bucket(obs)
@@ -66,17 +71,23 @@ def simulate(episodes, test):
             current_state = state
 
             if done:
-                print("episode {} reached {} step.".format(i, count))
-
+                #print("episode {} reached {} step.".format(i, count))
+                rec_game_rew.append(game_rew)
+                game_rew = 0
+                """
                 if test == False:
                     np.save('./data/ep{}_state'.format(i), rec_state)
                     np.save('./data/ep{}_action'.format(i), rec_action)
                 else:
                     np.save('./data/ep{}_state_test'.format(i), rec_state)
                     np.save('./data/ep{}_action_test'.format(i), rec_action)
+                """
 
     env.close()
-
+    avg_rew = sum(rec_game_rew) / episodes
+    num_success = sum(x == 500 for x in rec_game_rew)
+    print("avg_rew: ", avg_rew)
+    print("num_success: ", num_success)
 
 def state_to_bucket(state):
     # State space discretization
@@ -108,6 +119,7 @@ def state_to_bucket(state):
 
 if __name__ == '__main__':
     print("This package contains functions for simulating cart pole.")
+    simulate(100000, True)
 
 
 
